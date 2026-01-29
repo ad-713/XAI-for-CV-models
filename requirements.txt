@@ -1,0 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch
+torchvision
+matplotlib
+numpy
+pillow
+opencv-python
+tqdm
+ipykernel
+pandas

@@ -1,4 +1,4 @@
-data/
-outputs/
+data/*
+outputs/models/*
 __pycache__/
 !.gitkeep

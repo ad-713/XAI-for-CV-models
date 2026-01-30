@@ -58,7 +58,11 @@ class LimeExplainer:
             mask[explanation.segments == segment_id] = importance
             
         # Normalize mask to [0, 1] for visualization consistency with Grad-CAM
-        if np.max(mask) > 0:
-            mask = (mask - np.min(mask)) / (np.max(mask) - np.min(mask))
+        mask_min = np.min(mask)
+        mask_max = np.max(mask)
+        if mask_max > mask_min:
+            mask = (mask - mask_min) / (mask_max - mask_min)
+        else:
+            mask = np.zeros_like(mask)
         
         return mask, explanation

@@ -33,14 +33,6 @@ class ShapExplainer:
         # Each array has shape (1, C, H, W)
         shap_values = self.explainer.shap_values(image_tensor, ranked_outputs=None)
         
-        print(f"DEBUG: shap_values type: {type(shap_values)}")
-        if isinstance(shap_values, list):
-            print(f"DEBUG: shap_values list len: {len(shap_values)}")
-            if len(shap_values) > 0:
-                 print(f"DEBUG: shap_values[0] shape: {shap_values[0].shape}")
-        else:
-             print(f"DEBUG: shap_values shape: {shap_values.shape}")
-
         # Handle different SHAP return formats
         if isinstance(shap_values, list):
             target_shap_values = shap_values[target_class]
@@ -61,7 +53,11 @@ class ShapExplainer:
         heatmap = np.abs(heatmap)
         
         # Normalize to [0, 1]
-        if np.max(heatmap) > 0:
-            heatmap = (heatmap - np.min(heatmap)) / (np.max(heatmap) - np.min(heatmap))
+        heatmap_min = np.min(heatmap)
+        heatmap_max = np.max(heatmap)
+        if heatmap_max > heatmap_min:
+            heatmap = (heatmap - heatmap_min) / (heatmap_max - heatmap_min)
+        else:
+            heatmap = np.zeros_like(heatmap)
             
         return heatmap

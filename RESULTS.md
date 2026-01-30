@@ -5,10 +5,12 @@
 **Best Validation Accuracy:** 92.79%
 
 ## Classification Report
-The following table summarizes the precision, recall, and F1-score for each class on the test set.
+
+### Per-Class Metrics
+The following table summarizes the performance for each of the 10 CIFAR-10 classes.
 
 | Class | Precision | Recall | F1-Score | Support |
-| :--- | :--- | :--- | :--- | :--- |
+| :--- | :---: | :---: | :---: | :---: |
 | **airplane** | 0.94 | 0.94 | 0.94 | 1000 |
 | **automobile** | 0.96 | 0.97 | 0.97 | 1000 |
 | **bird** | 0.92 | 0.92 | 0.92 | 1000 |
@@ -19,7 +21,13 @@ The following table summarizes the precision, recall, and F1-score for each clas
 | **horse** | 0.95 | 0.95 | 0.95 | 1000 |
 | **ship** | 0.96 | 0.96 | 0.96 | 1000 |
 | **truck** | 0.96 | 0.95 | 0.96 | 1000 |
-| **Accuracy** | | | **0.93** | **10000** |
+
+### Overall Performance Summary
+
+**Overall Accuracy:** **93.00%**
+
+| Average Type | Precision | Recall | F1-Score | Support |
+| :--- | :---: | :---: | :---: | :---: |
 | **Macro Avg** | 0.93 | 0.93 | 0.93 | 10000 |
 | **Weighted Avg** | 0.93 | 0.93 | 0.93 | 10000 |
 

@@ -2,5 +2,6 @@ data/*
 outputs/models/*
 outputs/gradcam_gallery/*
 outputs/plots/*
+outputs/comparison/*
 __pycache__/
 !.gitkeep

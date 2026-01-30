@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
+import seaborn as sns
+from sklearn.metrics import classification_report, confusion_matrix
 
 def denormalize(tensor, mean=(0.4914, 0.4822, 0.4465), std=(0.2023, 0.1994, 0.2010)):
     for t, m, s in zip(tensor, mean, std):
@@ -39,3 +41,43 @@ def plot_gradcam(img_tensor, heatmap, title=None):
     plt.title(f"Grad-CAM {title if title else ''}")
     plt.axis('off')
     plt.show()
+
+def plot_history(history, save_path=None):
+    plt.figure(figsize=(12, 5))
+    
+    # Plot Accuracy
+    plt.subplot(1, 2, 1)
+    plt.plot(history['train_acc'], label='Train Acc')
+    plt.plot(history['val_acc'], label='Val Acc')
+    plt.title('Accuracy Evolution')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy (%)')
+    plt.legend()
+    
+    # Plot Loss
+    plt.subplot(1, 2, 2)
+    plt.plot(history['train_loss'], label='Train Loss')
+    plt.plot(history['val_loss'], label='Val Loss')
+    plt.title('Loss Evolution')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    
+    if save_path:
+        plt.savefig(save_path)
+    plt.show()
+
+def plot_confusion_matrix(y_true, y_pred, classes, save_path=None):
+    cm = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt='d', xticklabels=classes, yticklabels=classes, cmap='Blues')
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    
+    if save_path:
+        plt.savefig(save_path)
+    plt.show()
+
+def get_classification_report(y_true, y_pred, classes):
+    return classification_report(y_true, y_pred, target_names=classes)

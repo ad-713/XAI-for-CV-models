@@ -35,6 +35,9 @@ def validate(model, dataloader, criterion, device):
     correct = 0
     total = 0
     
+    all_preds = []
+    all_labels = []
+    
     with torch.no_grad():
         progress_bar = tqdm(dataloader, desc='Validation')
         for inputs, labels in progress_bar:
@@ -47,17 +50,21 @@ def validate(model, dataloader, criterion, device):
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
             
+            all_preds.extend(predicted.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+            
             progress_bar.set_postfix(loss=running_loss/len(dataloader), acc=100.*correct/total)
             
-    return running_loss / len(dataloader), 100. * correct / total
+    return running_loss / len(dataloader), 100. * correct / total, all_labels, all_preds
 
-def save_checkpoint(model, optimizer, epoch, acc, path):
+def save_checkpoint(model, optimizer, epoch, acc, path, history=None):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     state = {
         'model': model.state_dict(),
         'optimizer': optimizer.state_dict(),
         'epoch': epoch,
-        'acc': acc
+        'acc': acc,
+        'history': history
     }
     torch.save(state, path)
     print(f"Checkpoint saved to {path}")

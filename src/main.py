@@ -4,7 +4,9 @@ import torch.optim as optim
 from model import vgg16_cifar
 from dataset import get_dataloaders
 from train import train_one_epoch, validate, save_checkpoint
+from utils import plot_history, plot_confusion_matrix, get_classification_report
 import argparse
+import os
 
 def main():
     parser = argparse.ArgumentParser(description='VGG-16 CIFAR-10 Training')
@@ -26,20 +28,46 @@ def main():
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
 
+    history = {
+        'train_loss': [], 'train_acc': [],
+        'val_loss': [], 'val_acc': []
+    }
+
     best_acc = 0
+    final_y_true = []
+    final_y_pred = []
+
     for epoch in range(args.epochs):
         print(f"\nEpoch: {epoch+1}/{args.epochs}")
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device)
-        val_loss, val_acc = validate(model, test_loader, criterion, device)
+        val_loss, val_acc, y_true, y_pred = validate(model, test_loader, criterion, device)
         
         scheduler.step()
+        
+        # Record history
+        history['train_loss'].append(train_loss)
+        history['train_acc'].append(train_acc)
+        history['val_loss'].append(val_loss)
+        history['val_acc'].append(val_acc)
         
         if val_acc > best_acc:
             print(f"Validation accuracy improved from {best_acc:.2f}% to {val_acc:.2f}%")
             best_acc = val_acc
-            save_checkpoint(model, optimizer, epoch, val_acc, "outputs/models/vgg16_best.pth")
+            final_y_true = y_true
+            final_y_pred = y_pred
+            save_checkpoint(model, optimizer, epoch, val_acc, "outputs/models/vgg16_best.pth", history=history)
             
-    print(f"Training finished. Best accuracy: {best_acc:.2f}%")
+    print(f"\nTraining finished. Best accuracy: {best_acc:.2f}%")
+    
+    # Save training plots
+    os.makedirs("outputs/plots", exist_ok=True)
+    plot_history(history, save_path="outputs/plots/training_history.png")
+    
+    # Final metrics and Confusion Matrix
+    print("\nFinal Classification Report:")
+    print(get_classification_report(final_y_true, final_y_pred, classes))
+    
+    plot_confusion_matrix(final_y_true, final_y_pred, classes, save_path="outputs/plots/confusion_matrix.png")
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,6 @@
 data/*
 outputs/models/*
+outputs/gradcam_gallery/*
+outputs/plots/*
 __pycache__/
 !.gitkeep
